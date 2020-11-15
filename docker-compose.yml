@@ -1,0 +1,24 @@
+version: "3"
+services: 
+    app:
+        image: node:lts-alpine3.10
+        container_name: node-container
+        tty: true
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./app:/app
+        depends_on: 
+            - mysql
+            
+    mysql:
+        build: ./db/
+        volumes:
+            - ./db/init:/docker-entrypoint-initdb.d
+            - ./db/data:/var/lib/mysql
+        environment: 
+            - MYSQL_ROOT_PASSWORD=manager
+            - TZ=Asia/Tokyo
+        ports:
+            - "3306:3306"
+        container_name: mysql-usermanagement-container
