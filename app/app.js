@@ -2,25 +2,53 @@
 const express = require("express");
 const app = express();
 
-const bodyParser = require("body-parser");
 // リクエストのボディをパースする設定
+const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+
 // db
 const mysql = require('mysql2/promise');
 const db_setting = {
- host: process.env.DB_HOST || 'mysql', // dockerコンテナの場合はホストはサービス名になる。
- port: process.env.DB_PORT || 3306,
- user: process.env.DB_USER || 'root',
- password: process.env.DB_PASSWORD ||'manager',
- database: process.env.DB_DATABASE ||'management'
+    host: process.env.DB_HOST || 'mysql', // dockerコンテナの場合はホストはサービス名になる。
+    port: process.env.DB_PORT || 3306,
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD ||'manager',
+    database: process.env.DB_DATABASE ||'management'
 };
 
 const apiVer = "v1";
 
 /*
+* 静的ファイルのホスティング
+* app/static/
+*/
+const path = require("path");
+app.use(express.static(path.join(__dirname, "static")));
+
+/*
 * APIの設定
 */
+
+// num番目から100個のユーザーデータを取得
+// body: none, num: select fetch data number
+// return: userdata or error message
+app.get(`/api/${apiVer}/users/:num`, async(req, res) => {
+    let num = req.params.num;
+    let connection;
+    try {
+        connection = await mysql.createConnection(db_setting);
+        let result = await connection.query(`SELECT id, name, gender, date_of_birth, blood_type, jobs, email, phone_number FROM users LIMIT ${num-1}, 10`);
+        // console.log(result[0]);
+        data = result[0]
+        res.status(200).json({data});
+    } catch(err) {
+        res.status(500).send({error: err});
+    } finally {
+        connection.end();
+        return;
+    }
+});
 
 // ダミーデータの作成
 // body: none, num: how many dummy data
@@ -111,6 +139,7 @@ app.delete(`/api/${apiVer}/allusers`, async(req, res) => {
         return;
     }
 })
+
 const port = process.env.PORT || 3000;
 
 app.listen(port);
