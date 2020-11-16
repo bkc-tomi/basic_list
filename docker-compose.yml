@@ -1,7 +1,7 @@
 version: "3"
 services: 
     app:
-        image: node:lts-alpine3.10
+        build: ./app/
         container_name: node-container
         tty: true
         ports:
