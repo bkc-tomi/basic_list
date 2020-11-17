@@ -30,15 +30,14 @@ app.use(express.static(path.join(__dirname, "static")));
 * APIの設定
 */
 
-// num番目から1000個のユーザーデータを取得
-// body: none, num: select fetch data number
+// 全てのユーザーデータを取得
+// body: none, 
 // return: userdata or error message
-app.get(`/api/${apiVer}/users/thousand/:num`, async(req, res) => {
-    let num = req.params.num;
+app.get(`/api/${apiVer}/users`, async(req, res) => {
     let connection;
     try {
         connection = await mysql.createConnection(db_setting);
-        let result = await connection.query(`SELECT id, name, gender, date_of_birth, blood_type, jobs, email, phone_number FROM users LIMIT ${num-1}, 1000`);
+        let result = await connection.query(`SELECT id, name, gender, date_of_birth, blood_type, jobs, email, phone_number FROM users`);
         // console.log(result[0]);
         data = result[0]
         res.status(200).json(data);
