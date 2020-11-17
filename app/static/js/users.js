@@ -37,9 +37,14 @@ const usersModule = (() => {
                 const user = users[i];
                 const body = `
                             <tr>
-                                <td>${user.name}</td>
+                                <td>
+                                    <div class="namediv">
+                                        <img src="${user.icon || "assets/usericon.png"}" class="usericon" />
+                                        <p class="username">${user.name}</p>
+                                    </div>
+                                </td>
                                 <td>${user.gender}</td>
-                                <td>${user.date_of_birth}</td>
+                                <td>${user.date_of_birth.slice(0, 10)}</td>
                                 <td>${user.blood_type}</td>
                                 <td>${user.jobs}</td>
                                 <td>${user.email}</td>
