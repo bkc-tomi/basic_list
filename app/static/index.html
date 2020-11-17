@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ユーザー　一覧</title>
     <script src="js/users.js" defer></script>
     <script src="js/index.js"defer></script>
 
@@ -11,23 +11,24 @@
 </head>
 <body>
     <main>
-        <h1>ユーザー一覧</h1>
+        <h1>ユーザー　一覧</h1>
         <table>
             <thead>
                 <tr>
                     <th colspan="8" class="thmenu">
                         <div id="ctr-menu">
                             <input type="button" value="絞り込み" />
-                            <p>1000件中 1〜50件表示</p>
-                            <p>表示件数：</p>
-                            <select>
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                            <p>1/5ページ</p>
-                            <input type="button" value="←" />
-                            <input type="button" value="→" />
+                            <p><span id="data-length"></span>件中<span id="show-start"></span>〜<span id="show-end"></span>件表示</p>
+                            <p>表示件数：
+                                <select id="show-length">
+                                    <option selected value="20">20</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </p>
+                            <p><span id="current-page"></span>/<span id="page-length"></span>ページ</p>
+                            <input type="button" id="prev-btn" value="←" />
+                            <input type="button" id="next-btn" value="→" />
                         </div>
                     </th>
                 </tr>

@@ -29,31 +29,85 @@ const usersModule = (() => {
     //     }
     // }
 
+    // id:user-listのテーブルにusers[start]からusers[end]までのデータをセット
+    const setDatas = (start, end) => {
+        // 現在の要素の削除
+        const node = document.getElementById("users-list");
+        for (let i=node.childNodes.length-1; i>=0; i--) {
+            node.removeChild(node.childNodes[i]);
+        }
+        // 次のページのデータを表示
+        for (let i=start; i<end; i++) {
+            const user = users[i];
+            const body = `
+                        <tr>
+                            <td>
+                                <div class="namediv">
+                                    <img src="${user.icon || "assets/usericon.png"}" class="usericon" />
+                                    <p class="username">${user.name}</p>
+                                </div>
+                            </td>
+                            <td>${user.gender}</td>
+                            <td>${user.date_of_birth.slice(0, 10)}</td>
+                            <td>${user.blood_type}</td>
+                            <td>${user.jobs}</td>
+                            <td>${user.email}</td>
+                            <td>${user.phone_number}</td>
+                            <td><a href="edit.html?uid=${user.id}">編集</a></td>
+                        </tr>
+            `;
+            node.insertAdjacentHTML("beforeend", body);
+        }
+    }
+
+    let users;
     return {
-        fetchUsers: async(num) => {
-            const res = await fetch(`${BASE_URL}/thousand/${num}`);
-            const users = await res.json();
-            for (let i=0; i < users.length; i++) {
-                const user = users[i];
-                const body = `
-                            <tr>
-                                <td>
-                                    <div class="namediv">
-                                        <img src="${user.icon || "assets/usericon.png"}" class="usericon" />
-                                        <p class="username">${user.name}</p>
-                                    </div>
-                                </td>
-                                <td>${user.gender}</td>
-                                <td>${user.date_of_birth.slice(0, 10)}</td>
-                                <td>${user.blood_type}</td>
-                                <td>${user.jobs}</td>
-                                <td>${user.email}</td>
-                                <td>${user.phone_number}</td>
-                                <td><a href="edit.html?uid=${user.id}">編集</a></td>
-                            </tr>
-                `;
-                document.getElementById("users-list").insertAdjacentHTML("beforeend", body);
+        fetchUsers: async() => {
+            const res = await fetch(`${BASE_URL}`);
+            users = await res.json();
+            setDatas(0, 20);
+            // メニューバー情報の更新
+            document.getElementById("data-length").textContent = users.length;
+            document.getElementById("show-start").textContent = 1;
+            document.getElementById("show-end").textContent = 20;
+            document.getElementById("current-page").textContent = 1;
+            let pageLen = Math.ceil(users.length / 20);
+            document.getElementById("page-length").textContent = pageLen;
+        },
+        nextPage: () => {
+            let start = Number(document.getElementById("show-end").textContent);
+            let showLen = Number(document.getElementById("show-length").value);
+            let end = start + showLen;
+            let currentPage = Number(document.getElementById("current-page").textContent);
+            
+            if (end > users.length) {
+                alert("最後のページです。");
+                return
             }
+            setDatas(start, end);
+            // メニューバー情報の更新
+            document.getElementById("show-start").textContent = start + 1;
+            document.getElementById("show-end").textContent = end;
+            document.getElementById("current-page").textContent = currentPage + 1;
+        },
+        prevPage: () => {
+            let end = Number(document.getElementById("show-start").textContent) - 1;
+            let showLen = Number(document.getElementById("show-length").value);
+            let start = end - showLen;
+            let currentPage = Number(document.getElementById("current-page").textContent);
+            console.log(start, end , showLen, currentPage);
+            if (start < 0) {
+                alert("最初のページです。");
+                return
+            }
+            setDatas(start, end);
+            // メニューバー情報の更新
+            document.getElementById("show-start").textContent = start + 1;
+            document.getElementById("show-end").textContent = end;
+            document.getElementById("current-page").textContent = currentPage - 1;
+        },
+        changeShowLength: () => {
+
         }
     }
 })();

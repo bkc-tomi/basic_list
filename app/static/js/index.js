@@ -3,7 +3,15 @@ const indexModule = (() => {
 
     switch (path) {
         case "/":
-            return usersModule.fetchUsers(1);
+            document.getElementById("next-btn")
+            .addEventListener("click", () => {
+                return usersModule.nextPage();
+            });
+            document.getElementById("prev-btn")
+            .addEventListener("click", () => {
+                return usersModule.prevPage();
+            });
+            return usersModule.fetchUsers();
         default:
             break;
     }
