@@ -56,13 +56,15 @@ const usersModule = (() => {
         nextPage: () => {
             const start = Number(document.getElementById("show-end").textContent);
             const showLen = Number(document.getElementById("show-length").value);
-            const end = start + showLen;
+            let end = start + showLen;
             const currentPage = Number(document.getElementById("current-page").textContent);
+            const pageLength = Number(document.getElementById("page-length").textContent);
             
-            if (end > users.length) {
+            if (currentPage+1 > pageLength) {
                 alert("最後のページです。");
                 return
             }
+            if (end > users.length) end = users.length;
             setDatas(start, end);
             setDataToElements(-1, start+1, end, currentPage+1, -1);
         },
@@ -71,7 +73,7 @@ const usersModule = (() => {
             const showLen = Number(document.getElementById("show-length").value);
             const start = end - showLen;
             const currentPage = Number(document.getElementById("current-page").textContent);
-            console.log(start, end , showLen, currentPage);
+
             if (start < 0) {
                 alert("最初のページです。");
                 return
