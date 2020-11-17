@@ -75,10 +75,10 @@ const usersModule = (() => {
             document.getElementById("page-length").textContent = pageLen;
         },
         nextPage: () => {
-            let start = Number(document.getElementById("show-end").textContent);
-            let showLen = Number(document.getElementById("show-length").value);
-            let end = start + showLen;
-            let currentPage = Number(document.getElementById("current-page").textContent);
+            const start = Number(document.getElementById("show-end").textContent);
+            const showLen = Number(document.getElementById("show-length").value);
+            const end = start + showLen;
+            const currentPage = Number(document.getElementById("current-page").textContent);
             
             if (end > users.length) {
                 alert("最後のページです。");
@@ -91,10 +91,10 @@ const usersModule = (() => {
             document.getElementById("current-page").textContent = currentPage + 1;
         },
         prevPage: () => {
-            let end = Number(document.getElementById("show-start").textContent) - 1;
-            let showLen = Number(document.getElementById("show-length").value);
-            let start = end - showLen;
-            let currentPage = Number(document.getElementById("current-page").textContent);
+            const end = Number(document.getElementById("show-start").textContent) - 1;
+            const showLen = Number(document.getElementById("show-length").value);
+            const start = end - showLen;
+            const currentPage = Number(document.getElementById("current-page").textContent);
             console.log(start, end , showLen, currentPage);
             if (start < 0) {
                 alert("最初のページです。");
@@ -107,7 +107,14 @@ const usersModule = (() => {
             document.getElementById("current-page").textContent = currentPage - 1;
         },
         changeShowLength: () => {
-
+            const start = 0;
+            const showLen = Number(document.getElementById("show-length").value);
+            const end = start + showLen;
+            setDatas(start, end);
+            // メニューバー情報の更新
+            document.getElementById("show-start").textContent = start + 1;
+            document.getElementById("show-end").textContent = end;
+            document.getElementById("current-page").textContent = 1;
         }
     }
 })();

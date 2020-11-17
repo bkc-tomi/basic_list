@@ -11,6 +11,10 @@ const indexModule = (() => {
             .addEventListener("click", () => {
                 return usersModule.prevPage();
             });
+            document.getElementById("show-length")
+            .addEventListener("change", () => {
+                return usersModule.changeShowLength();
+            })
             return usersModule.fetchUsers();
         default:
             break;
