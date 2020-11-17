@@ -6,6 +6,8 @@
     <title>Document</title>
     <script src="js/users.js" defer></script>
     <script src="js/index.js"defer></script>
+
+    <link rel="stylesheet" type="text/css" href="style/index.css">
 </head>
 <body>
     <main>
@@ -13,14 +15,31 @@
         <table>
             <thead>
                 <tr>
-                    <th>氏名</th>
-                    <th>性別</th>
-                    <th>生年月日</th>
-                    <th>血液型</th>
-                    <th>職業</th>
-                    <th>メールアドレス</th>
-                    <th>電話番号</th>
-                    <th>メニュー</th>
+                    <th colspan="8" class="thmenu">
+                        <div id="ctr-menu">
+                            <input type="button" value="絞り込み" />
+                            <p>1000件中 1〜50件表示</p>
+                            <p>表示件数：</p>
+                            <select>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                            <p>1/5ページ</p>
+                            <input type="button" value="←" />
+                            <input type="button" value="→" />
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th class="thelem">氏名</th>
+                    <th class="thelem">性別</th>
+                    <th class="thelem">生年月日</th>
+                    <th class="thelem">血液型</th>
+                    <th class="thelem">職業</th>
+                    <th class="thelem">メールアドレス</th>
+                    <th class="thelem">電話番号</th>
+                    <th class="thelem">メニュー</th>
                 </tr>
             </thead>
             <tbody id="users-list">

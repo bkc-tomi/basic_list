@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, "static")));
 * APIの設定
 */
 
-// num番目から100個のユーザーデータを取得
+// num番目から1000個のユーザーデータを取得
 // body: none, num: select fetch data number
 // return: userdata or error message
 app.get(`/api/${apiVer}/users/thousand/:num`, async(req, res) => {
