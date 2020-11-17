@@ -47,20 +47,23 @@ table th {
     padding: 5px 10px;
     text-align: center;
     background: #aaaaaa;
-    border: 1px solid #999999;
     box-shadow: 0px 0px 5px #aaaaaa;
 }
 
 table td {
     /* padding: 5px 10px; */
     text-align: center;
-    border: 1px solid #999999;
     box-shadow: 1px 1px 5px #aaaaaa;
 }
 
 #ctr-menu {
     display: flex;
     justify-content: center;
+}
+#ctr-menu input {
+    padding: 0rem 2rem;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .namediv {

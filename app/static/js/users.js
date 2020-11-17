@@ -3,31 +3,6 @@ const usersModule = (() => {
 
     const headers = new Headers();
     headers.set("Content-type", "application/json");
-    // const handleError = async(res) => {
-    //     const resJson = await res.json();
-
-    //     switch (res.status) {
-    //         case 200:
-    //             alert(resJson.message);
-    //             window.location.href = "/";
-    //             break;
-    //         case 201:
-    //             alert(resJson.message);
-    //             window.location.href = "/";
-    //             break;
-    //         case 400:
-    //             alert(resJson.error);
-    //             break;
-    //         case 404:
-    //             alert(resJson.error);
-    //             break;
-    //         case 500:
-    //             alert(resJson.error);
-    //             break;
-    //         default:
-    //             alert("予期せぬエラー");
-    //     }
-    // }
 
     // id:user-listのテーブルにusers[start]からusers[end]までのデータをセット
     const setDatas = (start, end) => {
@@ -59,6 +34,14 @@ const usersModule = (() => {
             node.insertAdjacentHTML("beforeend", body);
         }
     }
+    // 格HTML要素に値をセット。セットしたくない要素には引数に-1を設定。
+    const setDataToElements = (dataLength=-1, showStart=-1, showEnd=-1, currentPage=-1, pageLength=-1) => {
+        if (dataLength >= 0) document.getElementById("data-length").textContent = dataLength;
+        if (showStart >= 0) document.getElementById("show-start").textContent = showStart;
+        if (showEnd >= 0) document.getElementById("show-end").textContent = showEnd;
+        if (currentPage >= 0) document.getElementById("current-page").textContent = currentPage;
+        if (pageLength >= 0) document.getElementById("page-length").textContent = pageLength;
+    }
 
     let users;
     return {
@@ -67,12 +50,8 @@ const usersModule = (() => {
             users = await res.json();
             setDatas(0, 20);
             // メニューバー情報の更新
-            document.getElementById("data-length").textContent = users.length;
-            document.getElementById("show-start").textContent = 1;
-            document.getElementById("show-end").textContent = 20;
-            document.getElementById("current-page").textContent = 1;
-            let pageLen = Math.ceil(users.length / 20);
-            document.getElementById("page-length").textContent = pageLen;
+            const pageLen = Math.ceil(users.length / 20);
+            setDataToElements(users.length, 1, 20, 1, pageLen);
         },
         nextPage: () => {
             const start = Number(document.getElementById("show-end").textContent);
@@ -85,10 +64,7 @@ const usersModule = (() => {
                 return
             }
             setDatas(start, end);
-            // メニューバー情報の更新
-            document.getElementById("show-start").textContent = start + 1;
-            document.getElementById("show-end").textContent = end;
-            document.getElementById("current-page").textContent = currentPage + 1;
+            setDataToElements(-1, start+1, end, currentPage+1, -1);
         },
         prevPage: () => {
             const end = Number(document.getElementById("show-start").textContent) - 1;
@@ -102,9 +78,7 @@ const usersModule = (() => {
             }
             setDatas(start, end);
             // メニューバー情報の更新
-            document.getElementById("show-start").textContent = start + 1;
-            document.getElementById("show-end").textContent = end;
-            document.getElementById("current-page").textContent = currentPage - 1;
+            setDataToElements(-1, start+1, end, currentPage-1, -1);
         },
         changeShowLength: () => {
             const start = 0;
@@ -112,9 +86,8 @@ const usersModule = (() => {
             const end = start + showLen;
             setDatas(start, end);
             // メニューバー情報の更新
-            document.getElementById("show-start").textContent = start + 1;
-            document.getElementById("show-end").textContent = end;
-            document.getElementById("current-page").textContent = 1;
+            const pageLen = Math.ceil(users.length / showLen);
+            setDataToElements(-1, start+1, end, 1, pageLen);
         }
     }
 })();
