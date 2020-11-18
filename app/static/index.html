@@ -12,12 +12,12 @@
 <body>
     <main>
         <h1>ユーザー　一覧</h1>
+        <input type="button" id="user-submit" value="ユーザー登録" />
         <table>
             <thead>
                 <tr>
                     <th colspan="8" class="thmenu">
                         <div id="ctr-menu">
-                            <input type="button" value="絞り込み" />
                             <p><span id="data-length"></span>件中<span id="show-start"></span>〜<span id="show-end"></span>件表示</p>
                             <p>表示件数：
                                 <select id="show-length">
@@ -29,6 +29,32 @@
                             <p><span id="current-page"></span>/<span id="page-length"></span>ページ</p>
                             <input type="button" id="prev-btn" value="←" />
                             <input type="button" id="next-btn" value="→" />
+                            <br />
+                            <div id="search-box">
+                                <input type="button" id="search" value="検索" />
+                                <label for="name">氏名</label>
+                                <input type="text" name="name" />
+                                <label for="gender">性別</label>
+                                <select name="gender">
+                                    <option value="-">-</option>
+                                    <option value="男性">男性</option>
+                                    <option value="女性">女性</option>
+                                </select>
+                                <label for="birth">生年月日</label>
+                                <input type="date" name="birth" />
+                                <label for="blood">性別</label>
+                                <select name="blood">
+                                    <option value="-">-</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="O">O</option>
+                                    <option value="AB">AB</option>
+                                </select>
+                                <label for="jobs">職業</label>
+                                <select name="jobs">
+                                    <option value="-">-</option>
+                                </select>
+                            </div>
                         </div>
                     </th>
                 </tr>
@@ -48,6 +74,32 @@
             </tbody>
         </table>
     </main>
-    
+
+    <div id="submit-bg" style="display: none;">
+        <div id="submit-box">
+            <h1>登録</h1>
+            <label for="name">氏名</label>
+            <input type="text" name="name" />
+            <label for="gender">性別</label>
+            <select name="gender">
+                <option value="男性">男性</option>
+                <option value="女性">女性</option>
+            </select>
+            <label for="birth">生年月日</label>
+            <input type="date" name="birth" />
+            <label for="blood">性別</label>
+            <select name="blood">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="O">O</option>
+                <option value="AB">AB</option>
+            </select>
+            <label for="jobs">職業</label>
+            <select name="jobs">
+                
+            </select>
+            <input type="button" id="close-submit" value="閉じる" />
+        </div>
+    </div>
 </body>
 </html>

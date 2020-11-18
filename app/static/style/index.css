@@ -23,6 +23,8 @@ table {
     width: 100%;
 }
 
+/* テーブル */
+
 .thmenu {
     /* 縦スクロール時に固定する */
     position: -webkit-sticky;
@@ -59,11 +61,24 @@ table td {
 #ctr-menu {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
 }
 #ctr-menu input {
     padding: 0rem 2rem;
     font-size: 20px;
     font-weight: bold;
+}
+
+#search-box {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0.2rem 0;
+}
+
+#search-box input {
+    font-size: 16px;
+    padding: 0 0.2rem;
+    font-weight: 500;
 }
 
 .namediv {
@@ -83,3 +98,28 @@ table td {
     border-radius: 50%;
     box-shadow: 0px 0px 5px #aaaaaa;
 }
+
+/* 絞り込み入力ボックス */
+
+.hidden {
+    display: none;
+}
+
+#submit-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#submit-box {
+    width: 500px;
+    background: #ffffff;
+}
+
