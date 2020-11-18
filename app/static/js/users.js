@@ -5,15 +5,16 @@ const usersModule = (() => {
     headers.set("Content-type", "application/json");
 
     // id:user-listのテーブルにusers[start]からusers[end]までのデータをセット
-    const setDatas = (start, end) => {
+    const setDatas = (start, end, datas) => {
         // 現在の要素の削除
         const node = document.getElementById("users-list");
+        console.log(node);
         for (let i=node.childNodes.length-1; i>=0; i--) {
             node.removeChild(node.childNodes[i]);
         }
         // 次のページのデータを表示
         for (let i=start; i<end; i++) {
-            const user = users[i];
+            const user = datas[i];
             const body = `
                         <tr>
                             <td>
@@ -42,13 +43,42 @@ const usersModule = (() => {
         if (currentPage >= 0) document.getElementById("current-page").textContent = currentPage;
         if (pageLength >= 0) document.getElementById("page-length").textContent = pageLength;
     }
-
+    // jobs配列に職業の種類をセットする
+    const generateJobs = () => {
+        jobs = [];
+        for (let i=0; i<users.length; i++) {
+            const user = users[i];
+            if (!jobs.includes(user.jobs)) jobs.push(user.jobs);
+        }
+        console.log(jobs);
+    }
+    // jobsをoptionにセット
+    const setJobs = () => {
+        // 子要素の削除
+        const node = document.getElementById("sch-jobs");
+        console.log(node);
+        for (let i=node.childNodes.length-1; i>=0; i--) {
+            node.removeChild(node.childNodes[i]);
+        }
+        const body = `<option value="-">-</option>`
+        node.insertAdjacentHTML("beforeend", body);
+        // optionの追加
+        for (let i=0; i<jobs.length; i++) {
+            const job = jobs[i];
+            const body = `<option value="${job}">${job}</option>`
+            node.insertAdjacentHTML("beforeend", body);
+        }
+    }
+    let jobs = [];
     let users;
+    let searchUsers = [];
     return {
         fetchUsers: async() => {
             const res = await fetch(`${BASE_URL}`);
             users = await res.json();
-            setDatas(0, 20);
+            setDatas(0, 20, users);
+            generateJobs();
+            setJobs();
             // メニューバー情報の更新
             const pageLen = Math.ceil(users.length / 20);
             setDataToElements(users.length, 1, 20, 1, pageLen);
@@ -65,7 +95,7 @@ const usersModule = (() => {
                 return
             }
             if (end > users.length) end = users.length;
-            setDatas(start, end);
+            setDatas(start, end, users);
             setDataToElements(-1, start+1, end, currentPage+1, -1);
         },
         prevPage: () => {
@@ -78,7 +108,7 @@ const usersModule = (() => {
                 alert("最初のページです。");
                 return
             }
-            setDatas(start, end);
+            setDatas(start, end, users);
             // メニューバー情報の更新
             setDataToElements(-1, start+1, end, currentPage-1, -1);
         },
@@ -86,10 +116,13 @@ const usersModule = (() => {
             const start = 0;
             const showLen = Number(document.getElementById("show-length").value);
             const end = start + showLen;
-            setDatas(start, end);
+            setDatas(start, end, users);
             // メニューバー情報の更新
             const pageLen = Math.ceil(users.length / showLen);
             setDataToElements(-1, start+1, end, 1, pageLen);
+        },
+        searchUsers: () => {
+            
         }
     }
 })();
