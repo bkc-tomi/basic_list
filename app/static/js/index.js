@@ -22,6 +22,10 @@ const indexModule = (() => {
                 const page = document.getElementById("submit-bg");
                 page.style.display = "none";
             });
+            // 検索
+            document.getElementById("search").addEventListener("click", () => {
+                return usersModule.searchUsers();
+            })
             return usersModule.fetchUsers();
         default:
             break;

@@ -1,5 +1,6 @@
 html, body {
     width: 100%;
+    min-width: 1200px;
     margin: 0;
     padding: 0;
     font-size: 16px;
@@ -39,7 +40,7 @@ table {
     /* 縦スクロール時に固定する */
     position: -webkit-sticky;
     position: sticky;
-    top: 2.7rem;
+    top: 4.8rem;
     height: 2rem;
     /* tbody内のセルより手前に表示する */
     z-index: 1;
@@ -78,6 +79,7 @@ table td {
 #search-box input {
     font-size: 16px;
     padding: 0 0.2rem;
+    /* width: 150px; */
     font-weight: 500;
 }
 

@@ -8,18 +8,18 @@ const usersModule = (() => {
     const setDatas = (start, end, datas) => {
         // 現在の要素の削除
         const node = document.getElementById("users-list");
-        console.log(node);
         for (let i=node.childNodes.length-1; i>=0; i--) {
             node.removeChild(node.childNodes[i]);
         }
         // 次のページのデータを表示
         for (let i=start; i<end; i++) {
+            if (!datas[i]) return;
             const user = datas[i];
             const body = `
                         <tr>
                             <td>
                                 <div class="namediv">
-                                    <img src="${user.icon || "assets/usericon.png"}" class="usericon" />
+                                    <img src="${ user.icon || "assets/usericon.png" }" class="usericon" />
                                     <p class="username">${user.name}</p>
                                 </div>
                             </td>
@@ -50,25 +50,29 @@ const usersModule = (() => {
             const user = users[i];
             if (!jobs.includes(user.jobs)) jobs.push(user.jobs);
         }
-        console.log(jobs);
     }
     // jobsをoptionにセット
     const setJobs = () => {
         // 子要素の削除
         const node = document.getElementById("sch-jobs");
-        console.log(node);
         for (let i=node.childNodes.length-1; i>=0; i--) {
             node.removeChild(node.childNodes[i]);
         }
+        // optionの追加
         const body = `<option value="-">-</option>`
         node.insertAdjacentHTML("beforeend", body);
-        // optionの追加
         for (let i=0; i<jobs.length; i++) {
             const job = jobs[i];
             const body = `<option value="${job}">${job}</option>`
             node.insertAdjacentHTML("beforeend", body);
         }
     }
+
+    const dateToNumber = (date) => {
+        let str = date.replace("-", "");
+        return Number(str.replace("-", ""));
+    }
+
     let jobs = [];
     let users;
     let searchUsers = [];
@@ -76,12 +80,13 @@ const usersModule = (() => {
         fetchUsers: async() => {
             const res = await fetch(`${BASE_URL}`);
             users = await res.json();
-            setDatas(0, 20, users);
+            searchUsers = users.slice();
+            setDatas(0, 20, searchUsers);
             generateJobs();
             setJobs();
             // メニューバー情報の更新
-            const pageLen = Math.ceil(users.length / 20);
-            setDataToElements(users.length, 1, 20, 1, pageLen);
+            const pageLen = Math.ceil(searchUsers.length / 20);
+            setDataToElements(searchUsers.length, 1, 20, 1, pageLen);
         },
         nextPage: () => {
             const start = Number(document.getElementById("show-end").textContent);
@@ -94,8 +99,8 @@ const usersModule = (() => {
                 alert("最後のページです。");
                 return
             }
-            if (end > users.length) end = users.length;
-            setDatas(start, end, users);
+            if (end > searchUsers.length) end = searchUsers.length;
+            setDatas(start, end, searchUsers);
             setDataToElements(-1, start+1, end, currentPage+1, -1);
         },
         prevPage: () => {
@@ -108,7 +113,7 @@ const usersModule = (() => {
                 alert("最初のページです。");
                 return
             }
-            setDatas(start, end, users);
+            setDatas(start, end, searchUsers);
             // メニューバー情報の更新
             setDataToElements(-1, start+1, end, currentPage-1, -1);
         },
@@ -116,13 +121,87 @@ const usersModule = (() => {
             const start = 0;
             const showLen = Number(document.getElementById("show-length").value);
             const end = start + showLen;
-            setDatas(start, end, users);
+            setDatas(start, end, searchUsers);
             // メニューバー情報の更新
-            const pageLen = Math.ceil(users.length / showLen);
+            const pageLen = Math.ceil(searchUsers.length / showLen);
             setDataToElements(-1, start+1, end, 1, pageLen);
         },
         searchUsers: () => {
+            const name = document.getElementById("sch-name").value;
+            const gender = document.getElementById("sch-gender").value;
+            const birthStart = document.getElementById("sch-birth-start").value;
+            const birthEnd = document.getElementById("sch-birth-end").value;
+            const blood = document.getElementById("sch-blood").value;
+            const job = document.getElementById("sch-jobs").value;
+
+            searchUsers = users.slice();
+            let tempUsers = [];
+            if (name != "") {
+                console.log(name);
+                for (let i=0; i<searchUsers.length; i++) {
+                    if (searchUsers[i].name == name) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (gender != "-") {
+                console.log(gender);
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    if (searchUsers[i].gender == gender) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (birthStart != "") {
+                const start = dateToNumber(birthStart);
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    let dt = searchUsers[i].date_of_birth.slice(0, 10);
+                    dt = dateToNumber(dt);
+                    if (dt >= start) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (birthEnd != "") {
+                const end = dateToNumber(birthEnd);
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    let dt = searchUsers[i].date_of_birth.slice(0, 10);
+                    dt = dateToNumber(dt);
+                    if (dt <= end) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (blood != "-") {
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    if (searchUsers[i].blood_type == blood) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (job != "-") {
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    if (searchUsers[i].jobs == job) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
             
+            const showLen = Number(document.getElementById("show-length").value);
+            const pageLen = Math.ceil(searchUsers.length / showLen);
+            setDatas(0, showLen, searchUsers);
+            setDataToElements(searchUsers.length, 1, showLen, 1, pageLen);
         }
     }
 })();
