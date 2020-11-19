@@ -11,8 +11,12 @@
 </head>
 <body>
     <main>
-        <h1>ユーザー　一覧</h1>
-        <input type="button" id="user-submit" value="ユーザー登録" />
+        <div class="header">
+            <h1 class="w80">ユーザー　一覧</h1>
+            <div class="w20 user-submit-area">
+                <input type="button" id="user-submit" value="ユーザー登録" />
+            </div>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -31,7 +35,6 @@
                             <input type="button" id="next-btn" value="→" />
                             <br />
                             <div id="search-box">
-                                <input type="button" id="search" value="検索" />
                                 <label for="sch-name">氏名</label>
                                 <input type="text"id="sch-name" name="sch-name" />
                                 <label for="sch-gender">性別</label>
@@ -56,6 +59,7 @@
                                 <select id="sch-jobs" name="sch-jobs">
                                     <option value="-">-</option>
                                 </select>
+                                <input type="button" id="search" value="検索" />
                             </div>
                         </div>
                     </th>

@@ -24,6 +24,34 @@ table {
     width: 100%;
 }
 
+input[type="button"] {
+    border: none;
+    border-radius: 5px;
+    background: #009FFF;
+    color: #ffffff;
+    margin: 0 0.5rem;
+    padding: 0 1rem;
+    box-shadow: 2px 2px 2px #000000;
+}
+input[type="button"]:hover {
+    background: #00AAFF;
+    box-shadow: 2px 2px 5px #000000;
+}
+
+.w80 {
+    width: 80%;
+}
+
+.w20 {
+    width: 20%;
+}
+
+/* ヘッダー */
+.header {
+    display: flex;
+    justify-content: left;
+}
+
 /* テーブル */
 
 .thmenu {
@@ -49,7 +77,8 @@ table {
 table th {
     padding: 5px 10px;
     text-align: center;
-    background: #aaaaaa;
+    background: #00AAFF;
+    color: #ffffff;
     box-shadow: 0px 0px 5px #aaaaaa;
 }
 
@@ -65,10 +94,12 @@ table td {
     flex-wrap: wrap;
 }
 #ctr-menu input {
-    padding: 0rem 2rem;
-    font-size: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 16px;
     font-weight: bold;
 }
+
+/* 絞り込み入力ボックス */
 
 #search-box {
     font-size: 16px;
@@ -101,7 +132,18 @@ table td {
     box-shadow: 0px 0px 5px #aaaaaa;
 }
 
-/* 絞り込み入力ボックス */
+/* 登録ボックス */
+
+.user-submit-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#user-submit {
+    width: 80%;
+    height: 80%;
+}
 
 .hidden {
     display: none;

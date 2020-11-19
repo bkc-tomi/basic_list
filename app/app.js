@@ -17,6 +17,8 @@ const db_setting = {
     database: process.env.DB_DATABASE ||'management'
 };
 
+const varidate = require("./varidate");
+
 const apiVer = "v1";
 
 /*
@@ -39,7 +41,7 @@ app.get(`/api/${apiVer}/users`, async(req, res) => {
         connection = await mysql.createConnection(db_setting);
         let result = await connection.query(`SELECT id, name, gender, date_of_birth, blood_type, jobs, email, phone_number FROM users`);
         // console.log(result[0]);
-        data = result[0]
+        const data = result[0]
         res.status(200).json(data);
     } catch(err) {
         res.status(500).send({error: err});
@@ -48,6 +50,81 @@ app.get(`/api/${apiVer}/users`, async(req, res) => {
         return;
     }
 });
+
+// 指定したユーザーデータの取得
+// body: none, param: id
+// return userdata selected from id or error message
+app.get(`/api/${apiVer}/users/:id`, async(req, res) => {
+    const id = req.params.id;
+    let connection;
+    try {
+        connection = await mysql.createConnection(db_setting);
+        let result = await connection.query(`SELECT id, name, gender, date_of_birth, blood_type, jobs, email, phone_number FROM users WHERE id=${id}`);
+        const data = result[0];
+        res.status(200).json(data);
+    } catch(err) {
+        res.status(500).send({error: err});
+    } finally {
+        connection.end();
+        return;
+    }
+});
+
+// ユーザーの登録
+app.post(`/api/${apiVer}/users`, async(req, res) => {
+    let check = 8;
+
+    if (!varidate.name(req.body.name)) check--;
+    if (!varidate.gender(req.body.gender)) check--;
+    if (!varidate.dateOfBirth(req.body.date_of_birth)) check--;
+    if (!varidate.blood(req.body.blood_type)) check--;
+    if (!varidate.jobs(req.body.jobs)) check--;
+    if (!varidate.email(req.body.email)) check--;
+    if (!varidate.phoneNumber(req.body.phone_number)) check--;
+    if (!varidate.password(req.body.password)) check--;
+    if (check !== 8) {
+        res.status(400).send({error: "入力されていない箇所があります。"});
+    } else {
+        let connection;
+        try {
+            connection = await mysql.createConnection(db_setting);
+            await connection.query("\
+            INSERT INTO users \
+            (name, password, gender, date_of_birth, blood_type, jobs, email, phone_number, create_at, update_at) \
+            VALUES \
+            (?,?,?,?,?,?,?,?,NOW(),NOW())",
+            [
+                req.body.name,
+                req.body.password,
+                req.body.gender,
+                req.body.date_of_birth,
+                req.body.blood_type,
+                req.body.jobs,
+                req.body.email,
+                req.body.phone_number
+            ]);
+            res.status(201).json();
+        } catch(err) {
+            res.status(500).send({error: err});
+        } finally {
+            connection.end();
+            return;
+        }
+    }
+});
+
+// ユーザーの削除
+app.delete(`/api/${apiVer}/users/:id`, async(req, res) => {
+    const id = req.params.id;
+    let connection;
+    try {
+        connection = await mysql.createConnection(db_setting);
+        let result = await connection.query(`SELECT * FROM users WHERE id=${id}`);
+        const data = result[0];
+    } catch(err) {
+        res.status(500).send({error: err});
+    }
+})
 
 // ダミーデータの作成
 // body: none, num: how many dummy data
