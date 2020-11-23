@@ -12,21 +12,15 @@ const indexModule = (() => {
             document.getElementById("show-length").addEventListener("change", () => {
                 return usersModule.changeShowLength();
             });
-            // 登録ウィンドウの表示
-            document.getElementById("user-submit").addEventListener("click", () => {
-                const page = document.getElementById("submit-bg");
-                page.style.display = "flex";
-            });
-            // 登録ウィンドウの非表示
-            document.getElementById("close-submit").addEventListener("click", () => {
-                const page = document.getElementById("submit-bg");
-                page.style.display = "none";
-            });
             // 検索
             document.getElementById("search").addEventListener("click", () => {
                 return usersModule.searchUsers();
             })
             return usersModule.fetchUsers();
+        case "/create.html":
+            document.getElementById("submit-user").addEventListener("click", () => {
+                return usersModule.createUser();
+            })
         default:
             break;
     }

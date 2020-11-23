@@ -14,7 +14,7 @@
         <div class="header">
             <h1 class="w80">ユーザー　一覧</h1>
             <div class="w20 user-submit-area">
-                <input type="button" id="user-submit" value="ユーザー登録" />
+                <input type="button" onclick="window.location.href='/create.html'" id="user-submit" value="ユーザー登録" />
             </div>
         </div>
         <table>
@@ -80,32 +80,5 @@
             </tbody>
         </table>
     </main>
-
-    <div id="submit-bg" style="display: none;">
-        <div id="submit-box">
-            <h1>登録</h1>
-            <label for="name">氏名</label>
-            <input type="text" name="name" />
-            <label for="gender">性別</label>
-            <select name="gender">
-                <option value="男性">男性</option>
-                <option value="女性">女性</option>
-            </select>
-            <label for="birth">生年月日</label>
-            <input type="date" name="birth" />
-            <label for="blood">性別</label>
-            <select name="blood">
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="O">O</option>
-                <option value="AB">AB</option>
-            </select>
-            <label for="jobs">職業</label>
-            <select name="jobs">
-                
-            </select>
-            <input type="button" id="close-submit" value="閉じる" />
-        </div>
-    </div>
 </body>
 </html>

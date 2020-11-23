@@ -4,6 +4,32 @@ const usersModule = (() => {
     const headers = new Headers();
     headers.set("Content-type", "application/json");
 
+    const handleError = async(res) => {
+        const resJson = await res.json();
+
+        switch (res.status) {
+            case 200:
+                alert(resJson.message);
+                window.location.href = "/";
+                break;
+            case 201:
+                alert(resJson.message);
+                window.location.href = "/";
+                break;
+            case 400:
+                alert(resJson.error);
+                break;
+            case 404:
+                alert(resJson.error);
+                break;
+            case 500:
+                alert(resJson.error);
+                break;
+            default:
+                alert("予期せぬエラー");
+        }
+    }
+
     // id:user-listのテーブルにusers[start]からusers[end]までのデータをセット
     const setDatas = (start, end, datas) => {
         // 現在の要素の削除
@@ -202,6 +228,38 @@ const usersModule = (() => {
             const pageLen = Math.ceil(searchUsers.length / showLen);
             setDatas(0, showLen, searchUsers);
             setDataToElements(searchUsers.length, 1, showLen, 1, pageLen);
+        },
+        createUser: async() => {
+            const btn = document.getElementById("submit-user");
+            btn.disabled = true;
+            const name = document.getElementById("name").value;
+            const gender = document.getElementById("gender").value;
+            const birth = document.getElementById("birth").value;
+            const blood = document.getElementById("blood").value;
+            const jobs = document.getElementById("jobs").value;
+            const email = document.getElementById("email").value;
+            const phoneNumber = document.getElementById("phone-number").value;
+            const password = document.getElementById("password").value;
+            
+            const body = {
+                name: name,
+                gender: gender,
+                date_of_birth: birth,
+                blood_type: blood,
+                jobs: jobs,
+                email: email,
+                phone_number: phoneNumber,
+                password: password
+            };
+
+            const res = await fetch(BASE_URL, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(body)
+            });
+
+            handleError(res);
+            btn.disabled = false;
         }
     }
 })();
