@@ -1,5 +1,6 @@
 html, body {
     width: 100%;
+    min-width: 1200px;
     margin: 0;
     padding: 0;
     font-size: 16px;
@@ -23,6 +24,36 @@ table {
     width: 100%;
 }
 
+input[type="button"] {
+    border: none;
+    border-radius: 5px;
+    background: #009FFF;
+    color: #ffffff;
+    margin: 0 0.5rem;
+    padding: 0 1rem;
+    box-shadow: 2px 2px 2px #000000;
+}
+input[type="button"]:hover {
+    background: #00AAFF;
+    box-shadow: 2px 2px 5px #000000;
+}
+
+.w80 {
+    width: 80%;
+}
+
+.w20 {
+    width: 20%;
+}
+
+/* ヘッダー */
+.header {
+    display: flex;
+    justify-content: left;
+}
+
+/* テーブル */
+
 .thmenu {
     /* 縦スクロール時に固定する */
     position: -webkit-sticky;
@@ -37,7 +68,7 @@ table {
     /* 縦スクロール時に固定する */
     position: -webkit-sticky;
     position: sticky;
-    top: 2.7rem;
+    top: 4.8rem;
     height: 2rem;
     /* tbody内のセルより手前に表示する */
     z-index: 1;
@@ -46,21 +77,41 @@ table {
 table th {
     padding: 5px 10px;
     text-align: center;
-    background: #aaaaaa;
-    border: 1px solid #999999;
+    background: #00AAFF;
+    color: #ffffff;
     box-shadow: 0px 0px 5px #aaaaaa;
 }
 
 table td {
     /* padding: 5px 10px; */
     text-align: center;
-    border: 1px solid #999999;
     box-shadow: 1px 1px 5px #aaaaaa;
 }
 
 #ctr-menu {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+}
+#ctr-menu input {
+    padding: 0.5rem 1rem;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* 絞り込み入力ボックス */
+
+#search-box {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0.2rem 0;
+}
+
+#search-box input {
+    font-size: 16px;
+    padding: 0 0.2rem;
+    /* width: 150px; */
+    font-weight: 500;
 }
 
 .namediv {
@@ -80,3 +131,39 @@ table td {
     border-radius: 50%;
     box-shadow: 0px 0px 5px #aaaaaa;
 }
+
+/* 登録ボックス */
+
+.user-submit-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#user-submit {
+    width: 80%;
+    height: 80%;
+}
+
+.hidden {
+    display: none;
+}
+
+#submit-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#submit-box {
+    width: 500px;
+    background: #ffffff;
+}
+

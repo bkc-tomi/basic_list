@@ -17,6 +17,8 @@ const db_setting = {
     database: process.env.DB_DATABASE ||'management'
 };
 
+const varidate = require("./varidate");
+
 const apiVer = "v1";
 
 /*
@@ -37,9 +39,9 @@ app.get(`/api/${apiVer}/users`, async(req, res) => {
     let connection;
     try {
         connection = await mysql.createConnection(db_setting);
-        let result = await connection.query(`SELECT id, name, gender, date_of_birth, blood_type, jobs, email, phone_number FROM users`);
+        let result = await connection.query(`SELECT id, name, gender, date_of_birth, blood_type, jobs, email, phone_number FROM users WHERE delete_at IS NULL`);
         // console.log(result[0]);
-        data = result[0]
+        const data = result[0]
         res.status(200).json(data);
     } catch(err) {
         res.status(500).send({error: err});
@@ -48,6 +50,132 @@ app.get(`/api/${apiVer}/users`, async(req, res) => {
         return;
     }
 });
+
+// 指定したユーザーデータの取得
+// body: none, param: id
+// return userdata selected from id or error message
+app.get(`/api/${apiVer}/users/:id`, async(req, res) => {
+    const id = req.params.id;
+    let connection;
+    try {
+        connection = await mysql.createConnection(db_setting);
+        let result = await connection.query(`SELECT id, name, gender, date_of_birth, blood_type, jobs, email, phone_number FROM users WHERE id=${id}`);
+        const data = result[0];
+        res.status(200).json(data);
+    } catch(err) {
+        res.status(500).send({error: err});
+    } finally {
+        connection.end();
+        return;
+    }
+});
+
+// ユーザーの登録
+app.post(`/api/${apiVer}/users`, async(req, res) => {
+    let check = 8;
+    let errMsg = "";
+    if (!varidate.name(req.body.name)) {
+        check--;
+        errMsg += "名前 ";
+    }
+    if (!varidate.gender(req.body.gender)) {
+        check--;
+        errMsg += "性別 ";
+    }
+    if (!varidate.dateOfBirth(req.body.date_of_birth)) {
+        check--;
+        errMsg += "生年月日 ";
+    }
+    if (!varidate.blood(req.body.blood_type)) {
+        check--;
+        errMsg += "血液型 ";
+    }
+    if (!varidate.jobs(req.body.jobs)) {
+        check--;
+        errMsg += "職業 ";
+    }
+    if (!varidate.email(req.body.email)) {
+        check--;
+        errMsg += "メールアドレス ";
+    }
+    if (!varidate.phoneNumber(req.body.phone_number)) {
+        check--;
+        errMsg += "電話番号 ";
+    }
+    if (!varidate.password(req.body.password)) {
+        check--;
+        errMsg += "パスワード ";
+    }
+    if (check !== 8) {
+        res.status(400).send({error: `「${errMsg}」の入力に問題があります。`});
+    } else {
+        let connection;
+        try {
+            connection = await mysql.createConnection(db_setting);
+            await connection.query(
+                "\
+                INSERT INTO users \
+                (name, password, gender, date_of_birth, blood_type, jobs, email, phone_number, create_at, update_at) \
+                VALUES \
+                (?,?,?,?,?,?,?,?,NOW(),NOW())",
+            [
+                req.body.name,
+                req.body.password,
+                req.body.gender,
+                req.body.date_of_birth,
+                req.body.blood_type,
+                req.body.jobs,
+                req.body.email,
+                req.body.phone_number
+            ]);
+            res.status(201).json({ message: "ユーザーを登録しました。"});
+        } catch(err) {
+            res.status(500).send({error: err});
+        } finally {
+            connection.end();
+            return;
+        }
+    }
+});
+
+// ユーザー情報の更新
+app.put(`/api/${apiVer}/users/:id`, async(req, res) => {
+
+});
+
+// ユーザーの削除
+// body: none, param: id
+// return message or error
+app.delete(`/api/${apiVer}/users/:id`, async(req, res) => {
+    const id = req.params.id;
+    let connection;
+    let data;
+    // ユーザーの存在を確認
+    try {
+        connection = await mysql.createConnection(db_setting);
+        let result = await connection.query(`SELECT * FROM users WHERE id=${id}`);
+        data = result[0];
+    } catch(err) {
+        res.status(500).send({error: err});
+    } finally {
+        connection.end();
+    }
+    // ユーザーの削除
+    if (data.length !== 1) {
+        res.status(400).send({ error: `id:${id}に対応するユーザーが見つかりませんでした。`});
+    } else {
+        try {
+            connection = await mysql.createConnection(db_setting);
+            await connection.query(`UPDATE users SET delete_at=NOW() WHERE id=${id}`);
+            res.status(200).send({ message: "ユーザーを削除しました。"});
+        } catch(err) {
+            res.status(500).send({ error: err});
+        } finally {
+            connection.end();
+            return;
+        }
+    }
+})
 
 // ダミーデータの作成
 // body: none, num: how many dummy data

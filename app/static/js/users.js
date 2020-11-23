@@ -3,34 +3,35 @@ const usersModule = (() => {
 
     const headers = new Headers();
     headers.set("Content-type", "application/json");
-    // const handleError = async(res) => {
-    //     const resJson = await res.json();
 
-    //     switch (res.status) {
-    //         case 200:
-    //             alert(resJson.message);
-    //             window.location.href = "/";
-    //             break;
-    //         case 201:
-    //             alert(resJson.message);
-    //             window.location.href = "/";
-    //             break;
-    //         case 400:
-    //             alert(resJson.error);
-    //             break;
-    //         case 404:
-    //             alert(resJson.error);
-    //             break;
-    //         case 500:
-    //             alert(resJson.error);
-    //             break;
-    //         default:
-    //             alert("予期せぬエラー");
-    //     }
-    // }
+    const handleError = async(res) => {
+        const resJson = await res.json();
+
+        switch (res.status) {
+            case 200:
+                alert(resJson.message);
+                window.location.href = "/";
+                break;
+            case 201:
+                alert(resJson.message);
+                window.location.href = "/";
+                break;
+            case 400:
+                alert(resJson.error);
+                break;
+            case 404:
+                alert(resJson.error);
+                break;
+            case 500:
+                alert(resJson.error);
+                break;
+            default:
+                alert("予期せぬエラー");
+        }
+    }
 
     // id:user-listのテーブルにusers[start]からusers[end]までのデータをセット
-    const setDatas = (start, end) => {
+    const setDatas = (start, end, datas) => {
         // 現在の要素の削除
         const node = document.getElementById("users-list");
         for (let i=node.childNodes.length-1; i>=0; i--) {
@@ -38,12 +39,13 @@ const usersModule = (() => {
         }
         // 次のページのデータを表示
         for (let i=start; i<end; i++) {
-            const user = users[i];
+            if (!datas[i]) return;
+            const user = datas[i];
             const body = `
                         <tr>
                             <td>
                                 <div class="namediv">
-                                    <img src="${user.icon || "assets/usericon.png"}" class="usericon" />
+                                    <img src="${ user.icon || "assets/usericon.png" }" class="usericon" />
                                     <p class="username">${user.name}</p>
                                 </div>
                             </td>
@@ -59,55 +61,205 @@ const usersModule = (() => {
             node.insertAdjacentHTML("beforeend", body);
         }
     }
+    // 格HTML要素に値をセット。セットしたくない要素には引数に-1を設定。
+    const setDataToElements = (dataLength=-1, showStart=-1, showEnd=-1, currentPage=-1, pageLength=-1) => {
+        if (dataLength >= 0) document.getElementById("data-length").textContent = dataLength;
+        if (showStart >= 0) document.getElementById("show-start").textContent = showStart;
+        if (showEnd >= 0) document.getElementById("show-end").textContent = showEnd;
+        if (currentPage >= 0) document.getElementById("current-page").textContent = currentPage;
+        if (pageLength >= 0) document.getElementById("page-length").textContent = pageLength;
+    }
+    // jobs配列に職業の種類をセットする
+    const generateJobs = () => {
+        jobs = [];
+        for (let i=0; i<users.length; i++) {
+            const user = users[i];
+            if (!jobs.includes(user.jobs)) jobs.push(user.jobs);
+        }
+    }
+    // jobsをoptionにセット
+    const setJobs = () => {
+        // 子要素の削除
+        const node = document.getElementById("sch-jobs");
+        for (let i=node.childNodes.length-1; i>=0; i--) {
+            node.removeChild(node.childNodes[i]);
+        }
+        // optionの追加
+        const body = `<option value="-">-</option>`
+        node.insertAdjacentHTML("beforeend", body);
+        for (let i=0; i<jobs.length; i++) {
+            const job = jobs[i];
+            const body = `<option value="${job}">${job}</option>`
+            node.insertAdjacentHTML("beforeend", body);
+        }
+    }
 
+    const dateToNumber = (date) => {
+        let str = date.replace("-", "");
+        return Number(str.replace("-", ""));
+    }
+
+    let jobs = [];
     let users;
+    let searchUsers = [];
     return {
         fetchUsers: async() => {
             const res = await fetch(`${BASE_URL}`);
             users = await res.json();
-            setDatas(0, 20);
+            searchUsers = users.slice();
+            setDatas(0, 20, searchUsers);
+            generateJobs();
+            setJobs();
             // メニューバー情報の更新
-            document.getElementById("data-length").textContent = users.length;
-            document.getElementById("show-start").textContent = 1;
-            document.getElementById("show-end").textContent = 20;
-            document.getElementById("current-page").textContent = 1;
-            let pageLen = Math.ceil(users.length / 20);
-            document.getElementById("page-length").textContent = pageLen;
+            const pageLen = Math.ceil(searchUsers.length / 20);
+            setDataToElements(searchUsers.length, 1, 20, 1, pageLen);
         },
         nextPage: () => {
-            let start = Number(document.getElementById("show-end").textContent);
-            let showLen = Number(document.getElementById("show-length").value);
+            const start = Number(document.getElementById("show-end").textContent);
+            const showLen = Number(document.getElementById("show-length").value);
             let end = start + showLen;
-            let currentPage = Number(document.getElementById("current-page").textContent);
+            const currentPage = Number(document.getElementById("current-page").textContent);
+            const pageLength = Number(document.getElementById("page-length").textContent);
             
-            if (end > users.length) {
+            if (currentPage+1 > pageLength) {
                 alert("最後のページです。");
                 return
             }
-            setDatas(start, end);
-            // メニューバー情報の更新
-            document.getElementById("show-start").textContent = start + 1;
-            document.getElementById("show-end").textContent = end;
-            document.getElementById("current-page").textContent = currentPage + 1;
+            if (end > searchUsers.length) end = searchUsers.length;
+            setDatas(start, end, searchUsers);
+            setDataToElements(-1, start+1, end, currentPage+1, -1);
         },
         prevPage: () => {
-            let end = Number(document.getElementById("show-start").textContent) - 1;
-            let showLen = Number(document.getElementById("show-length").value);
-            let start = end - showLen;
-            let currentPage = Number(document.getElementById("current-page").textContent);
-            console.log(start, end , showLen, currentPage);
+            const end = Number(document.getElementById("show-start").textContent) - 1;
+            const showLen = Number(document.getElementById("show-length").value);
+            const start = end - showLen;
+            const currentPage = Number(document.getElementById("current-page").textContent);
+
             if (start < 0) {
                 alert("最初のページです。");
                 return
             }
-            setDatas(start, end);
+            setDatas(start, end, searchUsers);
             // メニューバー情報の更新
-            document.getElementById("show-start").textContent = start + 1;
-            document.getElementById("show-end").textContent = end;
-            document.getElementById("current-page").textContent = currentPage - 1;
+            setDataToElements(-1, start+1, end, currentPage-1, -1);
         },
         changeShowLength: () => {
+            const start = 0;
+            const showLen = Number(document.getElementById("show-length").value);
+            const end = start + showLen;
+            setDatas(start, end, searchUsers);
+            // メニューバー情報の更新
+            const pageLen = Math.ceil(searchUsers.length / showLen);
+            setDataToElements(-1, start+1, end, 1, pageLen);
+        },
+        searchUsers: () => {
+            const name = document.getElementById("sch-name").value;
+            const gender = document.getElementById("sch-gender").value;
+            const birthStart = document.getElementById("sch-birth-start").value;
+            const birthEnd = document.getElementById("sch-birth-end").value;
+            const blood = document.getElementById("sch-blood").value;
+            const job = document.getElementById("sch-jobs").value;
 
+            searchUsers = users.slice();
+            let tempUsers = [];
+            if (name != "") {
+                console.log(name);
+                for (let i=0; i<searchUsers.length; i++) {
+                    if (searchUsers[i].name == name) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (gender != "-") {
+                console.log(gender);
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    if (searchUsers[i].gender == gender) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (birthStart != "") {
+                const start = dateToNumber(birthStart);
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    let dt = searchUsers[i].date_of_birth.slice(0, 10);
+                    dt = dateToNumber(dt);
+                    if (dt >= start) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (birthEnd != "") {
+                const end = dateToNumber(birthEnd);
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    let dt = searchUsers[i].date_of_birth.slice(0, 10);
+                    dt = dateToNumber(dt);
+                    if (dt <= end) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (blood != "-") {
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    if (searchUsers[i].blood_type == blood) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            if (job != "-") {
+                tempUsers = [];
+                for (let i=0; i<searchUsers.length; i++) {
+                    if (searchUsers[i].jobs == job) {
+                        tempUsers.push(searchUsers[i]);
+                    }
+                }
+                searchUsers = tempUsers.slice();
+            }
+            
+            const showLen = Number(document.getElementById("show-length").value);
+            const pageLen = Math.ceil(searchUsers.length / showLen);
+            setDatas(0, showLen, searchUsers);
+            setDataToElements(searchUsers.length, 1, showLen, 1, pageLen);
+        },
+        createUser: async() => {
+            const btn = document.getElementById("submit-user");
+            btn.disabled = true;
+            const name = document.getElementById("name").value;
+            const gender = document.getElementById("gender").value;
+            const birth = document.getElementById("birth").value;
+            const blood = document.getElementById("blood").value;
+            const jobs = document.getElementById("jobs").value;
+            const email = document.getElementById("email").value;
+            const phoneNumber = document.getElementById("phone-number").value;
+            const password = document.getElementById("password").value;
+            
+            const body = {
+                name: name,
+                gender: gender,
+                date_of_birth: birth,
+                blood_type: blood,
+                jobs: jobs,
+                email: email,
+                phone_number: phoneNumber,
+                password: password
+            };
+
+            const res = await fetch(BASE_URL, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(body)
+            });
+
+            handleError(res);
+            btn.disabled = false;
         }
     }
 })();
